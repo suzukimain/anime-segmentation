@@ -8,7 +8,7 @@ from PIL import Image
 import cv2
 import torch
 
-from inference import get_mask
+from config.inference import get_mask
 
 
 def _to_rgb_ndarray(img: Union[Image.Image, np.ndarray, str]) -> np.ndarray:
