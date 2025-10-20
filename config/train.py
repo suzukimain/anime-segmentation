@@ -10,8 +10,8 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from torch.utils.data import DataLoader
 from huggingface_hub import PyTorchModelHubMixin
 
-from data_loader import create_training_datasets
-from model import ISNetDIS, ISNetGTEncoder, U2NET, U2NET_full2, U2NET_lite2, MODNet \
+from .data_loader import create_training_datasets
+from .model import ISNetDIS, ISNetGTEncoder, U2NET, U2NET_full2, U2NET_lite2, MODNet \
     , InSPyReNet, InSPyReNet_Res2Net50, InSPyReNet_SwinB
 
 
