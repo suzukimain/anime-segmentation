@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import glob
 import os
-from typing import Optional, Union
+from typing import Union
 
 import numpy as np
 from PIL import Image
@@ -10,12 +9,6 @@ import cv2
 import torch
 
 from inference import get_mask
-from train import AnimeSegmentation, net_names
-
-# Simple global cache (avoid redundant loads)
-_cached_model = None
-_cached_device = None
-_cached_img_size = None
 
 
 def _to_rgb_ndarray(img: Union[Image.Image, np.ndarray, str]) -> np.ndarray:

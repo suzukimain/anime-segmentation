@@ -1,6 +1,5 @@
+from config.convert import convert_img  # type: ignore
 
-from convert import convert_img  # type: ignore
-
-from train import AnimeSegmentation
+from config.train import AnimeSegmentation
 
 __all__ = ["convert_img", "AnimeSegmentation"]
