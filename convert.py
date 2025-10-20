@@ -64,6 +64,7 @@ def _to_rgb_ndarray(img: Union[Image.Image, np.ndarray, str]) -> np.ndarray:
 def convert_img(
     img: Union[Image.Image, np.ndarray, str],
     *,
+    model: torch.nn.Module,
     img_size: int = 1024,
     bg_white: bool = False,
 ) -> Image.Image:
@@ -76,6 +77,7 @@ def convert_img(
       - model: already loaded model (optional)
       - net: network name to use when loading ckpt
       - ckpt: model checkpoint path (auto-discover if not provided)
+        -  model = AnimeSegmentation.from_pretrained("skytnt/anime-seg").to(device)
       - device: cpu / cuda:0 (auto-detect if not provided; fallback to CPU if CUDA unavailable)
       - img_size: inference size
       - bg_white: if True, composite over white background; if False, keep transparent background.
@@ -84,13 +86,10 @@ def convert_img(
       - PIL.Image (mode="RGBA")
     """
     rgb = _to_rgb_ndarray(img)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # Prepare model
-    model = AnimeSegmentation.from_pretrained("skytnt/anime-seg").to("cuda" if torch.cuda.is_available() else "cpu")
-
-    # Predicted mask [H, W, 1], values in [0, 1]
-    # Use AMP only when CUDA is available
-    use_amp = model.device.type == "cuda" and torch.cuda.is_available()
+    use_amp = device == "cuda" and torch.cuda.is_available()
     mask = get_mask(model, rgb, use_amp=use_amp, s=img_size)
 
     # Alpha composition: produce RGBA
