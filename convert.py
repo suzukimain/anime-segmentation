@@ -61,49 +61,6 @@ def _to_rgb_ndarray(img: Union[Image.Image, np.ndarray, str]) -> np.ndarray:
     raise TypeError("img must be PIL.Image, numpy.ndarray, or path str")
 
 
-def _ensure_model(
-    model: Optional[torch.nn.Module],
-    net: str,
-    ckpt: Optional[str],
-    device: Optional[str],
-    img_size: int,
-) -> torch.nn.Module:
-    """Prepare and return the model. If model is provided, use it. Otherwise load ckpt.
-    Once loaded, use the global cache."""
-    global _cached_model, _cached_device, _cached_img_size
-
-    if model is not None:
-        return model
-
-    if _cached_model is not None and _cached_device == device and _cached_img_size == img_size:
-        return _cached_model
-
-    if ckpt is None:
-        # Auto-discover (first found .ckpt)
-        ckpts = sorted(glob.glob("**/*.ckpt", recursive=True))
-        if not ckpts:
-            raise FileNotFoundError("No .ckpt found. Please specify ckpt path.")
-        ckpt = ckpts[0]
-
-    # Device fallback
-    if device is None:
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    elif device.startswith("cuda") and not torch.cuda.is_available():
-        device = "cpu"
-
-    if net not in net_names:
-        raise ValueError(f"Unsupported net: {net}. choices={net_names}")
-
-    m = AnimeSegmentation.try_load(net, ckpt, device, img_size)
-    m.eval()
-    m.to(device)
-
-    _cached_model = m
-    _cached_device = device
-    _cached_img_size = img_size
-    return m
-
-
 def convert_img(
     img: Union[Image.Image, np.ndarray, str],
     *,
@@ -133,7 +90,7 @@ def convert_img(
     rgb = _to_rgb_ndarray(img)
 
     # Prepare model
-    mdl = _ensure_model(model, net=net, ckpt=ckpt, device=device, img_size=img_size)
+    mdl = AnimeSegmentation.from_pretrained("skytnt/anime-seg").to("cuda" if torch.cuda.is_available() else "cpu")
 
     # Predicted mask [H, W, 1], values in [0, 1]
     # Use AMP only when CUDA is available
