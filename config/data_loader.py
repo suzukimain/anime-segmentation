@@ -12,7 +12,7 @@ import multiprocessing as mp
 from scipy.ndimage import grey_dilation, grey_erosion
 from torch.utils.data import Dataset
 from torchvision import transforms
-from dataset_generator import DatasetGenerator
+from .dataset_generator import DatasetGenerator
 
 
 class RescalePad(object):
