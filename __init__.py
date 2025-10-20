@@ -1,4 +1,4 @@
-from .config.convert import convert_img  # type: ignore
+from .convert import convert_img
 
 from .config.train import AnimeSegmentation
 
